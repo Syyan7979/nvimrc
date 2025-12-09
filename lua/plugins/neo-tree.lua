@@ -10,7 +10,6 @@ return {
         vim.g.neo_tree_remove_legacy_commands = 1
 
         local desired_tree_open = false
-        local pending_focus = false
 
         local function find_neo_tree_window()
             for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
@@ -21,34 +20,23 @@ return {
             end
         end
 
-        local function focus_tree_if_pending()
-            if not pending_focus then
-                return
-            end
-            local tree_win = find_neo_tree_window()
-            if tree_win and vim.api.nvim_win_is_valid(tree_win) then
-                vim.api.nvim_set_current_win(tree_win)
-                pending_focus = false
-            end
-        end
-
         local function ensure_tree_state(opts)
             opts = opts or {}
             local focus_tree = opts.focus_tree
             local tree_win = find_neo_tree_window()
 
             if desired_tree_open and not tree_win then
-                local previous = vim.api.nvim_get_current_win()
+                local previous
+                if not focus_tree then
+                    previous = vim.api.nvim_get_current_win()
+                end
                 require("neo-tree.command").execute({
-                    action = "show",
+                    action = focus_tree and "focus" or "show",
                     source = "filesystem",
                     position = "left",
                     reveal = true,
                 })
-                if focus_tree then
-                    pending_focus = true
-                    vim.defer_fn(focus_tree_if_pending, 10)
-                else
+                if not focus_tree and previous then
                     vim.schedule(function()
                         if vim.api.nvim_win_is_valid(previous) and vim.bo[vim.api.nvim_win_get_buf(previous)].filetype ~= "neo-tree" then
                             vim.api.nvim_set_current_win(previous)
@@ -56,7 +44,6 @@ return {
                     end)
                 end
             elseif desired_tree_open and tree_win and focus_tree then
-                pending_focus = false
                 vim.api.nvim_set_current_win(tree_win)
             elseif not desired_tree_open and tree_win then
                 require("neo-tree.command").execute({ action = "close" })
@@ -67,16 +54,6 @@ return {
             desired_tree_open = not desired_tree_open
             ensure_tree_state({ focus_tree = desired_tree_open })
         end, {})
-
-        local focus_group = vim.api.nvim_create_augroup("NeoTreeFocusSync", { clear = true })
-        vim.api.nvim_create_autocmd("BufWinEnter", {
-            group = focus_group,
-            callback = function(args)
-                if vim.bo[args.buf].filetype == "neo-tree" then
-                    focus_tree_if_pending()
-                end
-            end,
-        })
 
         local tab_sync_group = vim.api.nvim_create_augroup("NeoTreeTabSync", { clear = true })
         vim.api.nvim_create_autocmd({ "TabEnter", "TabNewEntered" }, {
