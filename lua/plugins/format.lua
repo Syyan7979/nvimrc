@@ -14,6 +14,7 @@ return {
 
         local prettier_config = vim.fn.expand("~/.config/nvim/.prettierrc.json")
         local stylua_config = vim.fn.expand("~/.config/nvim/stylua.toml")
+        local eslint_config = vim.fn.expand("~/.config/nvim/.eslintrc.json")
 
         conform.setup({
             notify_on_error = false,
@@ -29,12 +30,28 @@ return {
                 stylua = {
                     prepend_args = { "--config-path", stylua_config },
                 },
+                eslint_d = {
+                    command = "eslint_d",
+                    args = { "--stdin", "--stdin-filename", "$FILENAME", "--fix", "--config", eslint_config },
+                    stdin = true,
+                    condition = function()
+                        return vim.fn.executable("eslint_d") == 1
+                    end,
+                },
+                eslint = {
+                    command = "eslint",
+                    args = { "--stdin", "--stdin-filename", "$FILENAME", "--fix", "--config", eslint_config },
+                    stdin = true,
+                    condition = function()
+                        return vim.fn.executable("eslint") == 1
+                    end,
+                },
             },
             formatters_by_ft = {
-                javascript = { "prettierd", "prettier" },
-                typescript = { "prettierd", "prettier" },
-                javascriptreact = { "prettierd", "prettier" },
-                typescriptreact = { "prettierd", "prettier" },
+                javascript = { "eslint_d", "eslint", "prettierd", "prettier" },
+                typescript = { "eslint_d", "eslint", "prettierd", "prettier" },
+                javascriptreact = { "eslint_d", "eslint", "prettierd", "prettier" },
+                typescriptreact = { "eslint_d", "eslint", "prettierd", "prettier" },
                 json = { "prettierd", "prettier" },
                 jsonc = { "prettierd", "prettier" },
                 yaml = { "prettierd", "prettier" },

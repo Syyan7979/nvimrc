@@ -1,5 +1,8 @@
 {
     "tabWidth": 4,
     "useTabs": false,
-    "singleAttributePerLine": true
+    "singleAttributePerLine": true,
+    "printWidth": 60,
+    "trailingComma": "all",
+    "singleQuote": true
 }
