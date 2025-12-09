@@ -46,6 +46,10 @@ vim.keymap.set("n", "<leader>0", "10gt")
 vim.keymap.set("n", "oo", "o<Esc>")
 vim.keymap.set("n", "OO", "O<Esc>")
 
+-- Move highlighted blocks like Primeagen
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", opts)
+vim.keymap.set("v", "H", ":m '<-2<CR>gv=gv", opts)
+
 -- LSP keymaps
 local M = {}
 
