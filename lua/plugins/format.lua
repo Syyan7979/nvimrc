@@ -12,8 +12,24 @@ return {
             vim.notify("Format on save " .. state)
         end, {})
 
+        local prettier_config = vim.fn.expand("~/.config/nvim/.prettierrc.json")
+        local stylua_config = vim.fn.expand("~/.config/nvim/stylua.toml")
+
         conform.setup({
             notify_on_error = false,
+            formatters = {
+                prettierd = {
+                    env = {
+                        PRETTIERD_DEFAULT_CONFIG = prettier_config,
+                    },
+                },
+                prettier = {
+                    prepend_args = { "--config", prettier_config },
+                },
+                stylua = {
+                    prepend_args = { "--config-path", stylua_config },
+                },
+            },
             formatters_by_ft = {
                 javascript = { "prettierd", "prettier" },
                 typescript = { "prettierd", "prettier" },
@@ -43,4 +59,3 @@ return {
         end, { desc = "Format file" })
     end,
 }
-
