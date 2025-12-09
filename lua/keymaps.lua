@@ -4,7 +4,7 @@ local opts = { noremap = true, silent = true }
 vim.g.mapleader = " "
 
 -- Going back to main directory
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
+vim.keymap.set("n", "<leader>pv", "<cmd>NeoTreeGlobalToggle<CR>", opts)
 
 -- Opening a vertical terminal
 vim.keymap.set("n", "<leader>tv", ":vsplit | term<CR>", opts)
@@ -14,6 +14,9 @@ vim.keymap.set("n", "<leader>th", ":split | term<CR>", opts)
 
 -- Quiting Vim
 vim.keymap.set("n", "<leader>q", ":q<CR>", opts)
+
+-- Saving file
+vim.keymap.set("n", "<leader>w", ":w<CR>", opts)
 
 -- Clearing highlights after search
 vim.keymap.set("n", "<leader>/", ":noh<CR>", opts)
@@ -51,15 +54,15 @@ M.on_attach = function(client, bufnr)
     local buf_set_keymap = vim.api.nvim_buf_set_keymap
 
     -- Define keymap bindings for LSP
-    buf_set_keymap(bufnr, 'n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)  -- Go to definition
-    buf_set_keymap(bufnr, 'n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)        -- Hover documentation
-    buf_set_keymap(bufnr, 'n', 'gi', '<Cmd>lua vim.lsp.buf.implementation()<CR>', opts)  -- Go to implementation
-    buf_set_keymap(bufnr, 'n', 'gr', '<Cmd>lua vim.lsp.buf.references()<CR>', opts)  -- Find references
-    buf_set_keymap(bufnr, 'n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)  -- Go to declaration
-    buf_set_keymap(bufnr, 'n', '<leader>rn', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)  -- Rename symbol
-    buf_set_keymap(bufnr, 'n', '<leader>ca', '<Cmd>lua vim.lsp.buf.code_action()<CR>', opts) -- Code action
-    buf_set_keymap(bufnr, 'n', '[d', '<Cmd>lua vim.diagnostic.goto_prev()<CR>', opts) -- Previous diagnostic
-    buf_set_keymap(bufnr, 'n', ']d', '<Cmd>lua vim.diagnostic.goto_next()<CR>', opts) -- Next diagnostic
+    buf_set_keymap(bufnr, 'n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)           -- Go to definition
+    buf_set_keymap(bufnr, 'n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)                 -- Hover documentation
+    buf_set_keymap(bufnr, 'n', 'gi', '<Cmd>lua vim.lsp.buf.implementation()<CR>', opts)       -- Go to implementation
+    buf_set_keymap(bufnr, 'n', 'gr', '<Cmd>lua vim.lsp.buf.references()<CR>', opts)           -- Find references
+    buf_set_keymap(bufnr, 'n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)          -- Go to declaration
+    buf_set_keymap(bufnr, 'n', '<leader>rn', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)       -- Rename symbol
+    buf_set_keymap(bufnr, 'n', '<leader>ca', '<Cmd>lua vim.lsp.buf.code_action()<CR>', opts)  -- Code action
+    buf_set_keymap(bufnr, 'n', '[d', '<Cmd>lua vim.diagnostic.goto_prev()<CR>', opts)         -- Previous diagnostic
+    buf_set_keymap(bufnr, 'n', ']d', '<Cmd>lua vim.diagnostic.goto_next()<CR>', opts)         -- Next diagnostic
     buf_set_keymap(bufnr, 'n', '<leader>e', '<Cmd>lua vim.diagnostic.open_float()<CR>', opts) -- Show diagnostics
 end
 

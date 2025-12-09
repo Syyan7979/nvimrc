@@ -23,12 +23,6 @@ return {
                 additional_vim_regex_highlighting = false,
             },
 
-            -- Use correct commentstring based on context (e.g., TSX/JSX)
-            context_commentstring = {
-                enable = true,
-                enable_autocmd = false,
-            },
-
             -- Auto-close and rename tags in HTML/TSX
             autotag = {
                 enable = true,
