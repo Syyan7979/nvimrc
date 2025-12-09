@@ -138,6 +138,11 @@ return {
                 -- don't auto-open neo-tree when `nvim .` hijacks netrw
                 hijack_netrw_behavior = "disabled",
                 use_libuv_file_watcher = true,
+                filtered_items = {
+                    visible = true,
+                    hide_dotfiles = false,
+                    hide_gitignored = false,
+                },
             },
             window = {
                 position = "left",
