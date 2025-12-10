@@ -53,6 +53,15 @@ vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", opts)
 -- LSP keymaps
 local M = {}
 
+local function open_diagnostic_float_focus()
+    local float_bufnr, float_winnr = vim.diagnostic.open_float(nil, { focus = true, focusable = true })
+    if float_winnr and vim.api.nvim_win_is_valid(float_winnr) then
+        vim.api.nvim_set_current_win(float_winnr)
+    end
+end
+
+M.open_diagnostic_float_focus = open_diagnostic_float_focus
+
 -- Define the on_attach function
 M.on_attach = function(client, bufnr)
     local buf_set_keymap = vim.api.nvim_buf_set_keymap
@@ -67,7 +76,27 @@ M.on_attach = function(client, bufnr)
     buf_set_keymap(bufnr, 'n', '<leader>ca', '<Cmd>lua vim.lsp.buf.code_action()<CR>', opts)  -- Code action
     buf_set_keymap(bufnr, 'n', '[d', '<Cmd>lua vim.diagnostic.goto_prev()<CR>', opts)         -- Previous diagnostic
     buf_set_keymap(bufnr, 'n', ']d', '<Cmd>lua vim.diagnostic.goto_next()<CR>', opts)         -- Next diagnostic
-    buf_set_keymap(bufnr, 'n', '<leader>e', '<Cmd>lua vim.diagnostic.open_float()<CR>', opts) -- Show diagnostics
+    buf_set_keymap(
+        bufnr,
+        'n',
+        '<leader>e',
+        '<Cmd>lua require(\"keymaps\").open_diagnostic_float_focus()<CR>',
+        opts
+    ) -- Show diagnostics
 end
+
+-- Automatically apply LSP keymaps whenever any server attaches
+vim.api.nvim_create_autocmd("LspAttach", {
+    group = vim.api.nvim_create_augroup("UserLspKeymaps", { clear = true }),
+    callback = function(args)
+        if not (args and args.buf and args.data and args.data.client_id) then
+            return
+        end
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
+        if client then
+            M.on_attach(client, args.buf)
+        end
+    end,
+})
 
 return M
